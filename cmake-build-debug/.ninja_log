@@ -1,0 +1,7 @@
+# ninja log v5
+6	1619	7417974332393658	CMakeFiles/TextAndFileEncrypting.dir/main.cpp.obj	d3725bce3b12a4dc
+1741	2116	7417958917103959	TextAndFileEncrypting.exe	f7b951fcbbb1ba21
+2	269	7418018945159813	build.ninja	ca6a9a0c44fdffb7
+7	338	7418018993303901	TextAndFileEncrypting.exe	a6e777447446176a
+8	3898	7418019799938662	CMakeFiles/TextAndFileEncrypting.dir/main.cpp.obj	d3725bce3b12a4dc
+3899	4032	7418019800918644	TextAndFileEncrypting.exe	a6e777447446176a

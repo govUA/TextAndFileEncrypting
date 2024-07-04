@@ -1,0 +1,3 @@
+C:/Users/Alyona/CLionProjects/TextAndFileEncrypting/cmake-build-debug/CMakeFiles/TextAndFileEncrypting.dir
+C:/Users/Alyona/CLionProjects/TextAndFileEncrypting/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/Alyona/CLionProjects/TextAndFileEncrypting/cmake-build-debug/CMakeFiles/rebuild_cache.dir
