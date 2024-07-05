@@ -173,3 +173,16 @@ public:
         std::cout << duration.count() << std::endl;
     }
 };
+
+
+int main() {
+    CommandLineInterface cli;
+    for (int i = 0; i < 4; i++) {
+        std::cout << "--------------------------------------------------------------------" << std::endl << "Trial #"
+                  << i + 1 << std::endl << "Input file is located here:" << std::endl
+                  << "C:\\Users\\Alyona\\CLionProjects\\TextAndFileEncrypting\\out\\li.traw" << std::endl << std::endl;
+        cli.Run(i % 2);
+        std::cout << "--------------------------------------------------------------------" << std::endl;
+    }
+    return 0;
+}
