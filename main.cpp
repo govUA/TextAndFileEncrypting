@@ -115,3 +115,61 @@ public:
         content = newContent;
     }
 };
+
+
+class CommandLineInterface {
+public:
+    void Run(bool chunks) {
+        if (chunks) {
+            std::cout << "Chunk-based logic on:" << std::endl;
+        } else {
+            std::cout << "Chunk-based logic off:" << std::endl;
+        }
+        int chunkSize = 1024;
+        std::string operation, inputFilePath, outputFilePath;
+        int key;
+        std::cout << "Choose operation (encrypt/decrypt): ";
+        std::cin >> operation;
+        std::cout << "Enter input file path: ";
+        std::cin >> inputFilePath;
+        std::cout << "Enter output file path: ";
+        std::cin >> outputFilePath;
+        std::cout << "Enter key: ";
+        std::cin >> key;
+
+        CaesarCipher cipher("CaesarLibrary.dll");
+        Text text;
+
+        auto start = std::chrono::high_resolution_clock::now();
+        try {
+            if (chunks) {
+                text.ReadFromFileInChunks(inputFilePath, chunkSize);
+            } else {
+                text.ReadFromFile(inputFilePath);
+            }
+            std::string content = text.GetContent();
+            std::string result;
+
+            if (operation == "encrypt") {
+                result = cipher.Encrypt(content, key);
+            } else if (operation == "decrypt") {
+                result = cipher.Decrypt(content, key);
+            } else {
+                throw std::runtime_error("Invalid operation");
+            }
+
+            text.SetContent(result);
+            if (chunks) {
+                text.WriteToFileInChunks(outputFilePath, 1024);
+            } else {
+                text.WriteToFile(outputFilePath);
+            }
+            std::cout << "Operation completed successfully." << std::endl;
+        } catch (const std::exception &e) {
+            std::cerr << "Error: " << e.what() << std::endl;
+        }
+        auto end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> duration = end - start;
+        std::cout << duration.count() << std::endl;
+    }
+};
