@@ -46,3 +46,72 @@ public:
         return std::string(decrypted);
     }
 };
+
+
+class Text {
+private:
+    std::string content;
+
+public:
+    Text() {}
+
+    void ReadFromFile(const std::string &filePath) {
+        std::ifstream file(filePath);
+        if (!file.is_open()) {
+            throw std::runtime_error("Failed to open file");
+        }
+        content.assign((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+        file.close();
+    }
+
+    void ReadFromFileInChunks(const std::string &filePath, size_t chunkSize) {
+        std::ifstream file(filePath, std::ios::binary);
+        if (!file.is_open()) {
+            throw std::runtime_error("Failed to open file");
+        }
+
+        content.clear();
+        char *buffer = new char[chunkSize];
+        while (file.read(buffer, chunkSize) || file.gcount() > 0) {
+            content.append(buffer, file.gcount());
+        }
+
+        delete[] buffer;
+        file.close();
+    }
+
+    void WriteToFile(const std::string &filePath) {
+        std::ofstream file(filePath);
+        if (!file.is_open()) {
+            throw std::runtime_error("Failed to open file");
+        }
+        file << content;
+        file.close();
+    }
+
+    void WriteToFileInChunks(const std::string &filePath, size_t chunkSize) {
+        std::ofstream file(filePath, std::ios::binary);
+        if (!file.is_open()) {
+            throw std::runtime_error("Failed to open file");
+        }
+
+        size_t totalSize = content.size();
+        size_t written = 0;
+
+        while (written < totalSize) {
+            size_t sizeToWrite = std::min(chunkSize, totalSize - written);
+            file.write(content.c_str() + written, sizeToWrite);
+            written += sizeToWrite;
+        }
+
+        file.close();
+    }
+
+    std::string GetContent() const {
+        return content;
+    }
+
+    void SetContent(const std::string &newContent) {
+        content = newContent;
+    }
+};
