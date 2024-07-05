@@ -1,37 +1,48 @@
 #include <iostream>
 #include <Windows.h>
+#include <fstream>
+#include <string>
+#include <stdexcept>
+#include <chrono>
 
-typedef char *(*EncryptFuncType)(char *, int);
+class CaesarCipher {
+private:
+    HMODULE hDLL;
 
-typedef char *(*DecryptFuncType)(char *, int);
+    typedef char *(*EncryptFunc)(char *, int);
 
-int main() {
-    HINSTANCE hDll = LoadLibrary("CaesarLibrary.dll");
-    if (hDll == NULL) {
-        std::cerr << "Failed to load DLL." << std::endl;
-        return 1;
+    typedef char *(*DecryptFunc)(char *, int);
+
+    EncryptFunc encrypt;
+    DecryptFunc decrypt;
+
+public:
+    CaesarCipher(const std::string &dllPath) {
+        hDLL = LoadLibrary(dllPath.c_str());
+        if (!hDLL) {
+            throw std::runtime_error("Failed to load DLL");
+        }
+        encrypt = (EncryptFunc) GetProcAddress(hDLL, "encrypt");
+        decrypt = (DecryptFunc) GetProcAddress(hDLL, "decrypt");
+        if (!encrypt || !decrypt) {
+            FreeLibrary(hDLL);
+            throw std::runtime_error("Failed to get function address");
+        }
     }
 
-    EncryptFuncType encryptFunc = (EncryptFuncType) GetProcAddress(hDll, "encrypt");
-    DecryptFuncType decryptFunc = (DecryptFuncType) GetProcAddress(hDll, "decrypt");
-    if (encryptFunc == NULL || decryptFunc == NULL) {
-        std::cerr << "Failed to find function(s) in DLL." << std::endl;
-        FreeLibrary(hDll);
-        return 1;
+    ~CaesarCipher() {
+        if (hDLL) {
+            FreeLibrary(hDLL);
+        }
     }
 
-    char rawText[] = "Hello World!";
-    int key = 3;
+    std::string Encrypt(const std::string &rawText, int key) {
+        char *encrypted = encrypt(const_cast<char *>(rawText.c_str()), key);
+        return std::string(encrypted);
+    }
 
-    char *encryptedText = encryptFunc(rawText, key);
-    std::cout << "Encrypted Text: " << encryptedText << std::endl;
-
-    char *decryptedText = decryptFunc(encryptedText, key);
-    std::cout << "Decrypted Text: " << decryptedText << std::endl;
-
-    delete[] encryptedText;
-    delete[] decryptedText;
-
-    FreeLibrary(hDll);
-    return 0;
-}
+    std::string Decrypt(const std::string &encryptedText, int key) {
+        char *decrypted = decrypt(const_cast<char *>(encryptedText.c_str()), key);
+        return std::string(decrypted);
+    }
+};
